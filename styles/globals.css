@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-bg text-ink font-body;
+  background-image:
+    radial-gradient(circle at 0% 0%, rgba(15, 118, 110, 0.09), transparent 30%),
+    radial-gradient(circle at 100% 100%, rgba(37, 99, 235, 0.08), transparent 28%);
+  min-height: 100vh;
+}
+
+* {
+  @apply antialiased;
+}
+
+.card {
+  @apply rounded-2xl border border-line bg-panel shadow-panel;
+}

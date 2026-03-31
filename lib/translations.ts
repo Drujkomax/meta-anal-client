@@ -1,0 +1,201 @@
+export const translations = {
+  en: {
+    // Sidebar
+    'nav.dashboard': 'Dashboard',
+    'nav.campaigns': 'Campaigns',
+    'nav.adSets': 'Ad Sets',
+    'nav.ads': 'Ads',
+    'nav.dailyData': 'Daily Breakdown',
+    'nav.adAccounts': 'Ad Accounts',
+    'nav.adsInsights': 'Ads Insights',
+    'nav.metaSuite': 'Meta Suite',
+    'nav.console': 'Analytics Console',
+
+    // Header
+    'header.title': 'Meta Ads Analytics',
+    'header.account': 'Account',
+    'header.synced': 'Synced',
+    'header.connect': 'Connect',
+    'header.logout': 'Logout',
+    'header.sync': '↻ Sync',
+    'header.syncing': 'Syncing...',
+
+    // Metrics
+    'metric.spend': 'Spend',
+    'metric.impressions': 'Impressions',
+    'metric.reach': 'Reach',
+    'metric.clicks': 'Clicks',
+    'metric.uniqueClicks': 'Unique Clicks',
+    'metric.ctr': 'CTR',
+    'metric.cpc': 'CPC',
+    'metric.cpm': 'CPM',
+    'metric.frequency': 'Frequency',
+    'metric.totalSpend': 'Total Spend',
+
+    // Sections
+    'section.crossAccount': 'Cross-Account Summary',
+    'section.adInsights': 'Ad Insights',
+    'section.trends': 'Spend & Clicks Trend',
+    'section.campaign': 'Campaign',
+    'section.accountsSuffix': 'accounts',
+
+    // Table
+    'table.campaign': 'Campaign',
+    'table.adset': 'Ad Set',
+    'table.ad': 'Ad',
+    'table.status': 'Status',
+    'table.budget': 'Budget',
+    'table.date': 'Date',
+    'table.spend': 'Spend',
+    'table.impr': 'Impr.',
+    'table.reach': 'Reach',
+    'table.clicks': 'Clicks',
+    'table.ctr': 'CTR',
+    'table.cpc': 'CPC',
+    'table.cpm': 'CPM',
+    'table.noData': 'No entries found.',
+
+    // Filters
+    'search.placeholder': 'Search campaigns...',
+    'filter.allStatuses': 'All Statuses',
+
+    // Presets
+    'preset.7d': '7 days',
+    'preset.14d': '14 days',
+    'preset.30d': '30 days',
+    'preset.90d': '90 days',
+
+    // Account Switcher
+    'switcher.label': 'Select ad account',
+
+    // States & Auth
+    'state.loading': 'Loading analytics...',
+    'state.workspaceLoading': 'Loading your workspace...',
+    'state.noAccounts': 'No ad accounts connected',
+    'state.noAccountsDesc': 'Connect Meta OAuth with ads permissions. The backend loads your accessible ad accounts via Marketing API.',
+    'state.connectBtn': 'Connect Ad Accounts',
+    'state.error': 'Failed to load analytics. Reconnect the ad account and try again.',
+    'state.noData': 'No metrics data found for the selected date range.',
+    'state.notAvailable': 'Analytics unavailable for this account.',
+    'state.none': 'None',
+
+    // Partner Access
+    'identity.sources': 'Connected Sources',
+    'identity.connectAnother': 'Connect another client account',
+    'identity.disconnect': 'Disconnect',
+    'identity.helperTitle': 'How clients grant access',
+    'identity.step1': 'Go to Meta Business Settings -> Users -> Partners',
+    'identity.step2': 'Click Add -> Give partner access',
+    'identity.step3': 'Enter our Business ID',
+    'identity.step4': 'Select Ad Accounts to share',
+    'identity.step5': 'Assign Manage permissions',
+
+    // Time Ago
+    'time.never': 'Never',
+    'time.justNow': 'Just now',
+    'time.minAgo': 'm ago',
+    'time.hourAgo': 'h ago',
+    'time.dayAgo': 'd ago',
+  },
+  ru: {
+    // Sidebar
+    'nav.dashboard': 'Дашборд',
+    'nav.campaigns': 'Кампании',
+    'nav.adSets': 'Группы объявлений',
+    'nav.ads': 'Объявления',
+    'nav.dailyData': 'Разбивка по дням',
+    'nav.adAccounts': 'Рекламные аккаунты',
+    'nav.adsInsights': 'Аналитика рекламы',
+    'nav.metaSuite': 'Meta Инструменты',
+    'nav.console': 'Панель аналитики',
+
+    // Header
+    'header.title': 'Аналитика Meta Ads',
+    'header.account': 'Аккаунт',
+    'header.synced': 'Синхронизировано',
+    'header.connect': 'Подключить',
+    'header.logout': 'Выйти',
+    'header.sync': '↻ Обновить',
+    'header.syncing': 'Обновление...',
+
+    // Metrics
+    'metric.spend': 'Расход',
+    'metric.impressions': 'Показы',
+    'metric.reach': 'Охват',
+    'metric.clicks': 'Клики',
+    'metric.uniqueClicks': 'Уникальные клики',
+    'metric.ctr': 'CTR',
+    'metric.cpc': 'CPC',
+    'metric.cpm': 'CPM',
+    'metric.frequency': 'Частота',
+    'metric.totalSpend': 'Общий расход',
+
+    // Sections
+    'section.crossAccount': 'Сводка по всем аккаунтам',
+    'section.adInsights': 'Данные рекламы',
+    'section.trends': 'Тренды расхода и кликов',
+    'section.campaign': 'Кампания',
+    'section.accountsSuffix': 'аккаунта(ов)',
+
+    // Table
+    'table.campaign': 'Кампания',
+    'table.adset': 'Группа объяв.',
+    'table.ad': 'Объявление',
+    'table.status': 'Статус',
+    'table.budget': 'Бюджет',
+    'table.date': 'Дата',
+    'table.spend': 'Расход',
+    'table.impr': 'Показы',
+    'table.reach': 'Охват',
+    'table.clicks': 'Клики',
+    'table.ctr': 'CTR',
+    'table.cpc': 'CPC',
+    'table.cpm': 'CPM',
+    'table.noData': 'Данные не найдены.',
+
+    // Filters
+    'search.placeholder': 'Поиск кампаний...',
+    'filter.allStatuses': 'Все статусы',
+
+    // Presets
+    'preset.7d': '7 дней',
+    'preset.14d': '14 дней',
+    'preset.30d': '30 дней',
+    'preset.90d': '90 дней',
+
+    // Account Switcher
+    'switcher.label': 'Выберите аккаунт',
+
+    // States & Auth
+    'state.loading': 'Загрузка аналитики...',
+    'state.workspaceLoading': 'Загрузка рабочего пространства...',
+    'state.noAccounts': 'Рекламные аккаунты не подключены',
+    'state.noAccountsDesc': 'Подключите Meta OAuth с разрешениями на рекламу. Бэкенд загрузит доступные аккаунты через Marketing API.',
+    'state.connectBtn': 'Подключить аккаунты',
+    'state.error': 'Ошибка загрузки аналитики. Переподключите аккаунт и попробуйте снова.',
+    'state.noData': 'Данные не найдены за выбранный период.',
+    'state.notAvailable': 'Аналитика недоступна для этого аккаунта.',
+    'state.none': 'Нет',
+
+    // Partner Access
+    'identity.sources': 'Подключенные источники',
+    'identity.connectAnother': 'Подключить аккаунт клиента',
+    'identity.disconnect': 'Отключить',
+    'identity.helperTitle': 'Как клиенты выдают доступ',
+    'identity.step1': 'Перейдите в настройки Business Manager -> Пользователи -> Партнеры',
+    'identity.step2': 'Нажмите Добавить -> Дать партнеру доступ',
+    'identity.step3': 'Введите наш Business ID',
+    'identity.step4': 'Выберите рекламные аккаунты для общего доступа',
+    'identity.step5': 'Назначьте права администратора',
+
+    // Time Ago
+    'time.never': 'Никогда',
+    'time.justNow': 'Только что',
+    'time.minAgo': 'м назад',
+    'time.hourAgo': 'ч назад',
+    'time.dayAgo': 'д назад',
+  },
+};
+
+export type Language = 'en' | 'ru';
+export type TranslationKey = keyof typeof translations['en'];
