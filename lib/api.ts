@@ -13,7 +13,7 @@ import {
 } from './types';
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: (process.env.NEXT_PUBLIC_API_URL || '/api').replace(/\/+$/, ''),
   withCredentials: true,
   timeout: 30_000,
 });
@@ -24,7 +24,8 @@ const api = axios.create({
 
 export function getMetaLoginUrlWithNext(nextPath = '/dashboard'): string {
   const params = new URLSearchParams({ next: nextPath });
-  return `${process.env.NEXT_PUBLIC_API_URL}/auth/meta/login?${params.toString()}`;
+  const baseUrl = (process.env.NEXT_PUBLIC_API_URL || '/api').replace(/\/+$/, '');
+  return `${baseUrl}/auth/meta/login?${params.toString()}`;
 }
 
 export async function getSession(): Promise<AuthMeResponse> {
