@@ -59,11 +59,18 @@ export function DateRangePicker({ value, onChange }: { value: DateRange; onChang
 
   useEffect(() => {
     if (!open) return;
-    const onDoc = (e: MouseEvent) => {
+    const onPointer = (e: PointerEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     };
-    document.addEventListener('mousedown', onDoc);
-    return () => document.removeEventListener('mousedown', onDoc);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('pointerdown', onPointer);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('pointerdown', onPointer);
+      document.removeEventListener('keydown', onKey);
+    };
   }, [open]);
 
   const todayStr = dayjs().format(ISO);
@@ -101,7 +108,10 @@ export function DateRangePicker({ value, onChange }: { value: DateRange; onChang
   };
 
   const applyCustom = () => {
-    onChange({ from, to: to ?? from });
+    const safeFrom = from > todayStr ? todayStr : from;
+    const tentativeTo = to ?? from;
+    const safeTo = tentativeTo > todayStr ? todayStr : tentativeTo;
+    onChange({ from: safeFrom, to: safeTo });
     setOpen(false);
   };
 

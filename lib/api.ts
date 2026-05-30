@@ -18,6 +18,22 @@ const api = axios.create({
   timeout: 30_000,
 });
 
+// Safety net: if any request 401s (expired/invalid session) after the initial
+// page-level getSession() guard, bounce to /login once (avoid redirect loops).
+api.interceptors.response.use(
+  (res) => res,
+  (error) => {
+    if (
+      error?.response?.status === 401 &&
+      typeof window !== 'undefined' &&
+      window.location.pathname !== '/login'
+    ) {
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  },
+);
+
 // ---------------------------------------------------------------------------
 // Auth
 // ---------------------------------------------------------------------------
@@ -43,14 +59,13 @@ export async function logout(): Promise<void> {
 
 export async function getAccounts(): Promise<ConnectedAccount[]> {
   const { data } = await api.get<{ data: ConnectedAccount[] }>('/accounts');
-  return data.data;
+  return data?.data ?? [];
 }
 
 // ---------------------------------------------------------------------------
-// Identities
+// Ad management types
 // ---------------------------------------------------------------------------
 
-import { IdentityNode } from './types';
 import type {
   PublishFunnelResult,
   MetaPage,
@@ -62,15 +77,6 @@ import type {
   ReportRow,
 } from './types';
 import type { PublishPayload } from './adWizard';
-
-export async function getIdentities(): Promise<IdentityNode[]> {
-  const { data } = await api.get<{ data: IdentityNode[] }>('/identities');
-  return data.data;
-}
-
-export async function disconnectIdentity(metaUserId: string): Promise<void> {
-  await api.delete(`/identities/${encodeURIComponent(metaUserId)}`);
-}
 
 // ---------------------------------------------------------------------------
 // Analytics — single account with date range

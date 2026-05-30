@@ -29,6 +29,7 @@ export function CreateAdWizard() {
     if (step === 1)
       return (
         state.adSet.name.trim().length > 0 &&
+        (state.adSet.dailyBudget ?? 0) > 0 &&
         state.adSet.targeting.countries.length > 0 &&
         (state.adSet.optimization_goal !== 'OFFSITE_CONVERSIONS' || !!state.adSet.pixel_id)
       );

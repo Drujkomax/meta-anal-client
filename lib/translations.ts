@@ -6,7 +6,6 @@ export const translations = {
     'nav.adSets': 'Ad Sets',
     'nav.ads': 'Ads',
     'nav.dailyData': 'Daily Breakdown',
-    'nav.adAccounts': 'Ad Accounts',
     'nav.adsInsights': 'Ads Insights',
     'nav.metaSuite': 'Meta Suite',
     'nav.console': 'Analytics Console',
@@ -73,22 +72,11 @@ export const translations = {
     'state.workspaceLoading': 'Loading your workspace...',
     'state.noAccounts': 'No ad accounts connected',
     'state.noAccountsDesc': 'Connect Meta OAuth with ads permissions. The backend loads your accessible ad accounts via Marketing API.',
-    'state.connectBtn': 'Connect Ad Accounts',
+    'state.connectBtn': 'Sign in with Meta',
     'state.error': 'Failed to load analytics. Reconnect the ad account and try again.',
     'state.noData': 'No metrics data found for the selected date range.',
     'state.notAvailable': 'Analytics unavailable for this account.',
     'state.none': 'None',
-
-    // Partner Access
-    'identity.sources': 'Connected Sources',
-    'identity.connectAnother': 'Connect another client account',
-    'identity.disconnect': 'Disconnect',
-    'identity.helperTitle': 'How clients grant access',
-    'identity.step1': 'Go to Meta Business Settings -> Users -> Partners',
-    'identity.step2': 'Click Add -> Give partner access',
-    'identity.step3': 'Enter our Business ID',
-    'identity.step4': 'Select Ad Accounts to share',
-    'identity.step5': 'Assign Manage permissions',
 
     // Time Ago
     'time.never': 'Never',
@@ -162,7 +150,6 @@ export const translations = {
     'nav.adSets': 'Группы объявлений',
     'nav.ads': 'Объявления',
     'nav.dailyData': 'Разбивка по дням',
-    'nav.adAccounts': 'Рекламные аккаунты',
     'nav.adsInsights': 'Аналитика рекламы',
     'nav.metaSuite': 'Meta Инструменты',
     'nav.console': 'Панель аналитики',
@@ -229,22 +216,11 @@ export const translations = {
     'state.workspaceLoading': 'Загрузка рабочего пространства...',
     'state.noAccounts': 'Рекламные аккаунты не подключены',
     'state.noAccountsDesc': 'Подключите Meta OAuth с разрешениями на рекламу. Бэкенд загрузит доступные аккаунты через Marketing API.',
-    'state.connectBtn': 'Подключить аккаунты',
+    'state.connectBtn': 'Войти через Meta',
     'state.error': 'Ошибка загрузки аналитики. Переподключите аккаунт и попробуйте снова.',
     'state.noData': 'Данные не найдены за выбранный период.',
     'state.notAvailable': 'Аналитика недоступна для этого аккаунта.',
     'state.none': 'Нет',
-
-    // Partner Access
-    'identity.sources': 'Подключенные источники',
-    'identity.connectAnother': 'Подключить аккаунт клиента',
-    'identity.disconnect': 'Отключить',
-    'identity.helperTitle': 'Как клиенты выдают доступ',
-    'identity.step1': 'Перейдите в настройки Business Manager -> Пользователи -> Партнеры',
-    'identity.step2': 'Нажмите Добавить -> Дать партнеру доступ',
-    'identity.step3': 'Введите наш Business ID',
-    'identity.step4': 'Выберите рекламные аккаунты для общего доступа',
-    'identity.step5': 'Назначьте права администратора',
 
     // Time Ago
     'time.never': 'Никогда',

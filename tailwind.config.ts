@@ -8,20 +8,22 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bg: '#f4f6f8',
+        bg: '#f5f7fa',
+        background: '#f5f7fa',
         panel: '#ffffff',
-        ink: '#14171c',
-        muted: '#6b7280',
-        accent: '#0f766e',
-        accentSoft: '#d5f3ef',
-        line: '#e7eaee',
+        ink: '#0f1115',
+        muted: '#667085',
+        accent: '#1877F2',
+        accentSoft: '#e7f1ff',
+        line: '#e6e9ef',
       },
       fontFamily: {
         heading: ['var(--font-space-grotesk)'],
         body: ['var(--font-manrope)'],
       },
       boxShadow: {
-        panel: '0 10px 24px rgba(15, 23, 42, 0.06)',
+        panel: '0 1px 2px rgba(16, 24, 40, 0.04), 0 8px 24px rgba(16, 24, 40, 0.06)',
+        soft: '0 1px 2px rgba(16, 24, 40, 0.05)',
       },
       keyframes: {
         fadeUp: {

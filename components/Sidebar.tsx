@@ -17,7 +17,6 @@ export function Sidebar({ currentPath = '/dashboard' }: SidebarProps) {
     { label: 'nav.campaigns', href: '/campaigns' },
     { label: 'nav.createAd', href: '/ads/new' },
     { label: 'nav.reports', href: '/reports' },
-    { label: 'nav.adAccounts', href: '/dashboard#accounts' },
     { label: 'nav.adsInsights', href: '/dashboard#ads' },
   ];
 

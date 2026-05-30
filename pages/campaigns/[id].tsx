@@ -22,6 +22,7 @@ export default function CampaignDetailPage() {
   const [data, setData] = useState<CampaignDetail | null>(null);
   const [datePreset, setDatePreset] = useState<DatePreset>('30d');
   const [isLoading, setIsLoading] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const selectedDays = DATE_PRESETS.find((p) => p.value === datePreset)?.days ?? 30;
   
@@ -46,8 +47,9 @@ export default function CampaignDetailPage() {
     setIsLoading(true);
     getCampaignDetail(String(selectedAccountId), String(campaignId), dateFrom, dateTo)
       .then(setData)
+      .catch(() => setData(null))
       .finally(() => setIsLoading(false));
-  }, [selectedAccountId, campaignId, dateFrom, dateTo, accountsLoading]);
+  }, [selectedAccountId, campaignId, dateFrom, dateTo, accountsLoading, refreshKey]);
 
   if (sessionLoading || accountsLoading) {
     return <div className="flex min-h-screen items-center justify-center bg-background text-sm text-muted">{t('state.loading')}</div>;
@@ -81,7 +83,7 @@ export default function CampaignDetailPage() {
               </p>
               {data && (
                 <div className="mt-3">
-                  <ManageActions level="campaign" objectId={String(campaignId)} status={data.status} />
+                  <ManageActions level="campaign" objectId={String(campaignId)} status={data.status} onChanged={() => setRefreshKey((k) => k + 1)} />
                 </div>
               )}
             </div>

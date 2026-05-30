@@ -2,13 +2,6 @@
 // Shared frontend types
 // ---------------------------------------------------------------------------
 
-export interface IdentityNode {
-  meta_user_id: string;
-  meta_user_name: string;
-  connected_at: string;
-  account_count: number;
-}
-
 export interface ConnectedAccount {
   id: string;
   name: string;

@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useRouter } from 'next/router';
 import { useLanguage } from './LanguageProvider';
 import { useAccount } from './AccountProvider';
 import { updateAdObjectStatus, updateAdObjectBudget, deleteAdObject } from '../lib/api';
@@ -10,14 +9,15 @@ export function ManageActions({
   level,
   objectId,
   status,
+  onChanged,
 }: {
   level: AdLevel;
   objectId: string;
   status?: string;
+  onChanged?: () => void;
 }) {
   const { t } = useLanguage();
   const { selectedAccountId } = useAccount();
-  const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
@@ -30,7 +30,7 @@ export function ManageActions({
     setErr(null);
     try {
       await fn();
-      router.replace(router.asPath);
+      onChanged?.();
     } catch (e) {
       setErr(
         (e as { response?: { data?: { error?: { message?: string } } } })?.response?.data?.error

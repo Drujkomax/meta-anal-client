@@ -23,7 +23,7 @@ export function AccountProvider({ children }: { children: ReactNode }) {
 
   const setSelectedAccountId = (id: string) => {
     setSelectedAccountIdState(id);
-    localStorage.setItem(STORAGE_KEY, id);
+    if (typeof window !== 'undefined') localStorage.setItem(STORAGE_KEY, id);
     
     // Also update URL if we want to synchronize, but for now we just persist
     // If we update the URL here, it might trigger a transition we don't want.
@@ -69,9 +69,9 @@ export function AccountProvider({ children }: { children: ReactNode }) {
     const queryId = router.query.account_id as string;
     if (queryId && queryId !== selectedAccountId && accounts.some(a => a.id === queryId)) {
       setSelectedAccountIdState(queryId);
-      localStorage.setItem(STORAGE_KEY, queryId);
+      if (typeof window !== 'undefined') localStorage.setItem(STORAGE_KEY, queryId);
     }
-  }, [router.query.account_id, accounts]);
+  }, [router.query.account_id, accounts, selectedAccountId]);
 
   return (
     <AccountContext.Provider 

@@ -56,6 +56,7 @@ export default function CampaignsPage() {
     setIsLoading(true);
     getCampaignsList(selectedAccountId, dateFrom, dateTo)
       .then(setData)
+      .catch(() => setData([]))
       .finally(() => setIsLoading(false));
   }, [selectedAccountId, dateFrom, dateTo, accountsLoading]);
 

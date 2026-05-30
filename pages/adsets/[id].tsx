@@ -22,6 +22,7 @@ export default function AdSetDetailPage() {
   const [data, setData] = useState<AdSetDetail | null>(null);
   const [datePreset, setDatePreset] = useState<DatePreset>('30d');
   const [isLoading, setIsLoading] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const selectedDays = DATE_PRESETS.find((p) => p.value === datePreset)?.days ?? 30;
   
@@ -46,8 +47,9 @@ export default function AdSetDetailPage() {
     setIsLoading(true);
     getAdSetDetail(String(selectedAccountId), String(adsetId), dateFrom, dateTo)
       .then(setData)
+      .catch(() => setData(null))
       .finally(() => setIsLoading(false));
-  }, [selectedAccountId, adsetId, dateFrom, dateTo, accountsLoading]);
+  }, [selectedAccountId, adsetId, dateFrom, dateTo, accountsLoading, refreshKey]);
 
   if (sessionLoading || accountsLoading) {
     return <div className="flex min-h-screen items-center justify-center bg-background text-sm text-muted">{t('state.loading')}</div>;
@@ -82,7 +84,7 @@ export default function AdSetDetailPage() {
               </p>
               {data && (
                 <div className="mt-3">
-                  <ManageActions level="adset" objectId={String(adsetId)} status={data.status} />
+                  <ManageActions level="adset" objectId={String(adsetId)} status={data.status} onChanged={() => setRefreshKey((k) => k + 1)} />
                 </div>
               )}
             </div>
