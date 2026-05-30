@@ -21,6 +21,7 @@ import {
   MetaCampaignsResponse,
   MetaRateLimitInfo,
 } from '../types/meta';
+import { MetaApiError, type MetaErrorBody } from './metaErrors';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -176,11 +177,13 @@ export class MetaClient {
   /** Latest rate-limit info, keyed by ad account id */
   private readonly rateLimitState = new Map<string, MetaRateLimitInfo>();
 
-  constructor() {
-    this.http = axios.create({
-      baseURL: `https://graph.facebook.com/${env.META_GRAPH_VERSION}`,
-      timeout: 30_000,
-    });
+  constructor(httpClient?: AxiosInstance) {
+    this.http =
+      httpClient ??
+      axios.create({
+        baseURL: `https://graph.facebook.com/${env.META_GRAPH_VERSION}`,
+        timeout: 30_000,
+      });
   }
 
   // -------------------------------------------------------------------------
@@ -403,6 +406,207 @@ export class MetaClient {
     } while (afterCursor);
 
     return { data: mergedData };
+  }
+
+  // -------------------------------------------------------------------------
+  // Write operations (campaigns / ad sets / ads) + lookups for the wizard
+  // -------------------------------------------------------------------------
+
+  private normalizeAccountId(adAccountId: string): string {
+    return adAccountId.startsWith('act_') ? adAccountId : `act_${adAccountId}`;
+  }
+
+  /** POST/DELETE through the per-account limiter, with retry + Meta error mapping. */
+  private async writeRequest<T>(
+    method: 'post' | 'delete',
+    endpoint: string,
+    accessToken: string,
+    data: Record<string, unknown>,
+    adAccountId: string,
+    maxRetries = 2,
+  ): Promise<T> {
+    const limiter = this.getLimiterForAccount(adAccountId);
+
+    const execute = async (): Promise<T> => {
+      let attempt = 0;
+      while (attempt <= maxRetries) {
+        try {
+          const params = { ...data, access_token: accessToken };
+          const response =
+            method === 'post'
+              ? await this.http.post<T>(endpoint, null, { params })
+              : await this.http.delete<T>(endpoint, { params });
+
+          const info = parseRateLimitHeader(response.headers as Record<string, unknown>);
+          if (info) {
+            this.rateLimitState.set(adAccountId, info);
+            this.adjustLimiterSpeed(limiter, info);
+          }
+          return response.data;
+        } catch (error) {
+          const axiosError = error as AxiosError;
+          const canRetry = isRetryableMetaError(axiosError) && attempt < maxRetries;
+          if (!canRetry) {
+            const body = (axiosError.response?.data as { error?: MetaErrorBody } | undefined)?.error;
+            throw new MetaApiError(body, axiosError);
+          }
+          await new Promise((resolve) => setTimeout(resolve, 600 * 2 ** attempt));
+          attempt += 1;
+        }
+      }
+      throw new MetaApiError({ message: 'Meta API write failed after retries' });
+    };
+
+    return limiter.schedule(execute);
+  }
+
+  async createCampaign(
+    adAccountId: string,
+    accessToken: string,
+    payload: Record<string, unknown>,
+  ): Promise<{ id: string }> {
+    const id = this.normalizeAccountId(adAccountId);
+    return this.writeRequest('post', `/${id}/campaigns`, accessToken, payload, id);
+  }
+
+  async createAdSet(
+    adAccountId: string,
+    accessToken: string,
+    payload: Record<string, unknown>,
+  ): Promise<{ id: string }> {
+    const id = this.normalizeAccountId(adAccountId);
+    return this.writeRequest('post', `/${id}/adsets`, accessToken, payload, id);
+  }
+
+  async createAdCreativeFromPost(
+    adAccountId: string,
+    accessToken: string,
+    payload: { name: string; object_story_id: string },
+  ): Promise<{ id: string }> {
+    const id = this.normalizeAccountId(adAccountId);
+    return this.writeRequest('post', `/${id}/adcreatives`, accessToken, payload as Record<string, unknown>, id);
+  }
+
+  async createAd(
+    adAccountId: string,
+    accessToken: string,
+    payload: Record<string, unknown>,
+  ): Promise<{ id: string }> {
+    const id = this.normalizeAccountId(adAccountId);
+    return this.writeRequest('post', `/${id}/ads`, accessToken, payload, id);
+  }
+
+  async updateObject(
+    objectId: string,
+    accessToken: string,
+    adAccountId: string,
+    fields: Record<string, unknown>,
+  ): Promise<{ success?: boolean }> {
+    const id = this.normalizeAccountId(adAccountId);
+    return this.writeRequest('post', `/${objectId}`, accessToken, fields, id);
+  }
+
+  async deleteObject(
+    objectId: string,
+    accessToken: string,
+    adAccountId: string,
+  ): Promise<{ success?: boolean }> {
+    const id = this.normalizeAccountId(adAccountId);
+    return this.writeRequest('delete', `/${objectId}`, accessToken, {}, id);
+  }
+
+  async getPages(
+    accessToken: string,
+  ): Promise<{ data: Array<{ id: string; name: string; access_token?: string }> }> {
+    const { data } = await this.http.get('/me/accounts', {
+      params: { fields: 'id,name,access_token', limit: 200, access_token: accessToken },
+    });
+    return data;
+  }
+
+  async getPromotablePosts(
+    pageId: string,
+    accessToken: string,
+  ): Promise<{ data: Array<{ id: string; message?: string; created_time?: string }> }> {
+    const { data } = await this.http.get(`/${pageId}/ads_posts`, {
+      params: { fields: 'id,message,created_time', limit: 100, access_token: accessToken },
+    });
+    return data;
+  }
+
+  async getAdPixels(
+    adAccountId: string,
+    accessToken: string,
+  ): Promise<{ data: Array<{ id: string; name: string }> }> {
+    const id = this.normalizeAccountId(adAccountId);
+    const { data } = await this.http.get(`/${id}/adspixels`, {
+      params: { fields: 'id,name', access_token: accessToken },
+    });
+    return data;
+  }
+
+  async getCustomAudiences(
+    adAccountId: string,
+    accessToken: string,
+  ): Promise<{ data: Array<{ id: string; name: string; subtype?: string; approximate_count?: number }> }> {
+    const id = this.normalizeAccountId(adAccountId);
+    const { data } = await this.http.get(`/${id}/customaudiences`, {
+      params: { fields: 'id,name,subtype,approximate_count', limit: 200, access_token: accessToken },
+    });
+    return data;
+  }
+
+  async getSavedAudiences(
+    adAccountId: string,
+    accessToken: string,
+  ): Promise<{ data: Array<{ id: string; name: string }> }> {
+    const id = this.normalizeAccountId(adAccountId);
+    const { data } = await this.http.get(`/${id}/saved_audiences`, {
+      params: { fields: 'id,name', limit: 200, access_token: accessToken },
+    });
+    return data;
+  }
+
+  async searchInterests(
+    accessToken: string,
+    q: string,
+  ): Promise<{ data: Array<{ id: string; name: string; audience_size_lower_bound?: number }> }> {
+    const { data } = await this.http.get('/search', {
+      params: { type: 'adinterest', q, limit: 25, access_token: accessToken },
+    });
+    return data;
+  }
+
+  async searchGeo(
+    accessToken: string,
+    q: string,
+  ): Promise<{ data: Array<{ key: string; name: string; type: string }> }> {
+    const { data } = await this.http.get('/search', {
+      params: {
+        type: 'adgeolocation',
+        q,
+        location_types: JSON.stringify(['country', 'region', 'city']),
+        access_token: accessToken,
+      },
+    });
+    return data;
+  }
+
+  async getDeliveryEstimate(
+    adAccountId: string,
+    accessToken: string,
+    targeting: Record<string, unknown>,
+    optimizationGoal: string,
+  ): Promise<{ data: unknown[] }> {
+    const id = this.normalizeAccountId(adAccountId);
+    const { data } = await this.http.get(`/${id}/delivery_estimate`, {
+      params: {
+        targeting_spec: JSON.stringify(targeting),
+        optimization_goal: optimizationGoal,
+        access_token: accessToken,
+      },
+    });
+    return data;
   }
 
   // -------------------------------------------------------------------------
