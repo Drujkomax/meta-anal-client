@@ -1,0 +1,26 @@
+{
+  "_comment": "Пример воронки для: node scripts/ads.mjs publish --account act_XXX --file examples/funnel.example.json. Бюджеты в центах (1000 = $10.00). Всё создаётся PAUSED. Замените pixel_id и object_story_id на реальные (из команд `pixels` и `posts`).",
+  "campaign": {
+    "name": "Test Sales Campaign",
+    "objective": "OUTCOME_SALES",
+    "special_ad_categories": [],
+    "daily_budget": 1000
+  },
+  "adSet": {
+    "name": "US 18-45 — Purchases",
+    "daily_budget": 1000,
+    "optimization_goal": "OFFSITE_CONVERSIONS",
+    "billing_event": "IMPRESSIONS",
+    "targeting": {
+      "geo_locations": { "countries": ["US"] },
+      "age_min": 18,
+      "age_max": 45,
+      "publisher_platforms": ["facebook", "instagram"]
+    },
+    "promoted_object": { "pixel_id": "REPLACE_WITH_PIXEL_ID", "custom_event_type": "PURCHASE" }
+  },
+  "ad": {
+    "name": "Ad — existing post",
+    "object_story_id": "REPLACE_WITH_PAGEID_POSTID"
+  }
+}
