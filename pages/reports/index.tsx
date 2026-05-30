@@ -1,11 +1,12 @@
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { getSession, getReport, reportExportUrl } from '../../lib/api';
-import { DATE_PRESETS, DatePreset, ReportRow, AdLevel } from '../../lib/types';
+import { ReportRow, AdLevel } from '../../lib/types';
 import { Sidebar } from '../../components/Sidebar';
 import { useLanguage } from '../../components/LanguageProvider';
 import { useAccount } from '../../components/AccountProvider';
+import { DateRangePicker, type DateRange } from '../../components/DateRangePicker';
 
 const LEVELS: AdLevel[] = ['campaign', 'adset', 'ad'];
 
@@ -16,17 +17,15 @@ export default function ReportsPage() {
 
   const [sessionLoading, setSessionLoading] = useState(true);
   const [level, setLevel] = useState<AdLevel>('campaign');
-  const [datePreset, setDatePreset] = useState<DatePreset>('30d');
+  const [range, setRange] = useState<DateRange>({
+    from: new Date(Date.now() - 29 * 864e5).toISOString().split('T')[0],
+    to: new Date().toISOString().split('T')[0],
+  });
   const [rows, setRows] = useState<ReportRow[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const days = DATE_PRESETS.find((p) => p.value === datePreset)?.days ?? 30;
-  const dateFrom = useMemo(() => {
-    const d = new Date();
-    d.setDate(d.getDate() - days + 1);
-    return d.toISOString().split('T')[0];
-  }, [days]);
-  const dateTo = useMemo(() => new Date().toISOString().split('T')[0], []);
+  const dateFrom = range.from;
+  const dateTo = range.to;
 
   useEffect(() => {
     getSession()
@@ -94,22 +93,7 @@ export default function ReportsPage() {
                 ))}
               </select>
 
-              <div className="flex rounded-xl border border-line bg-panel text-sm">
-                {DATE_PRESETS.map((preset) => (
-                  <button
-                    key={preset.value}
-                    type="button"
-                    onClick={() => setDatePreset(preset.value)}
-                    className={`px-3 py-2 transition ${
-                      datePreset === preset.value
-                        ? 'bg-ink text-white first:rounded-l-xl last:rounded-r-xl'
-                        : 'text-muted hover:text-ink'
-                    }`}
-                  >
-                    {t(`preset.${preset.value}` as 'preset.7d')}
-                  </button>
-                ))}
-              </div>
+              <DateRangePicker value={range} onChange={setRange} />
 
               <a
                 href={exportLevelUrl('csv')}

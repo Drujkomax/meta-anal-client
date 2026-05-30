@@ -1,8 +1,8 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { getAdDetail, getSession } from '../../lib/api';
-import { AdDetail, DATE_PRESETS, DatePreset } from '../../lib/types';
+import { AdDetail } from '../../lib/types';
 import { Sidebar } from '../../components/Sidebar';
 import { Breadcrumbs } from '../../components/Breadcrumbs';
 import { StatusBadge } from '../../components/StatusBadge';
@@ -10,6 +10,7 @@ import { MetricsRow } from '../../components/MetricsRow';
 import { useLanguage } from '../../components/LanguageProvider';
 import { useAccount } from '../../components/AccountProvider';
 import { ManageActions } from '../../components/ManageActions';
+import { DateRangePicker, type DateRange } from '../../components/DateRangePicker';
 import { Language } from '../../lib/translations';
 
 export default function AdDetailPage() {
@@ -20,12 +21,10 @@ export default function AdDetailPage() {
   
   const [sessionLoading, setSessionLoading] = useState(true);
   const [data, setData] = useState<AdDetail | null>(null);
-  const [datePreset, setDatePreset] = useState<DatePreset>('30d');
+  const [range, setRange] = useState<DateRange>({ from: daysAgo(30), to: new Date().toISOString().split('T')[0] });
   const [isLoading, setIsLoading] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const selectedDays = DATE_PRESETS.find((p) => p.value === datePreset)?.days ?? 30;
-  
   function daysAgo(days: number): string {
     const d = new Date();
     d.setDate(d.getDate() - days + 1);
@@ -38,8 +37,8 @@ export default function AdDetailPage() {
     return d.toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' });
   }
 
-  const dateFrom = useMemo(() => daysAgo(selectedDays), [selectedDays]);
-  const dateTo = useMemo(() => new Date().toISOString().split('T')[0], []);
+  const dateFrom = range.from;
+  const dateTo = range.to;
 
   useEffect(() => {
     getSession().then((res) => {
@@ -96,22 +95,7 @@ export default function AdDetailPage() {
               )}
             </div>
             
-            <div className="flex rounded-xl border border-line bg-panel text-sm">
-              {DATE_PRESETS.map((preset) => (
-                <button
-                  key={preset.value}
-                  type="button"
-                  onClick={() => setDatePreset(preset.value)}
-                  className={`px-3 py-2 transition ${
-                    datePreset === preset.value
-                      ? 'bg-ink text-white first:rounded-l-xl last:rounded-r-xl'
-                      : 'text-muted hover:text-ink'
-                  }`}
-                >
-                  {t(`preset.${preset.value}` as any)}
-                </button>
-              ))}
-            </div>
+            <DateRangePicker value={range} onChange={setRange} />
           </header>
 
           {isLoading ? (

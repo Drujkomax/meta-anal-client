@@ -3,13 +3,14 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { getCampaignsList, getSession } from '../../lib/api';
-import { CampaignListItem, DATE_PRESETS, DatePreset } from '../../lib/types';
+import { CampaignListItem } from '../../lib/types';
 import { Sidebar } from '../../components/Sidebar';
 import { AccountSwitcher } from '../../components/AccountSwitcher';
 import { StatusBadge } from '../../components/StatusBadge';
 import { SearchFilter } from '../../components/SearchFilter';
 import { useLanguage } from '../../components/LanguageProvider';
 import { useAccount } from '../../components/AccountProvider';
+import { DateRangePicker, type DateRange } from '../../components/DateRangePicker';
 
 export default function CampaignsPage() {
   const router = useRouter();
@@ -18,14 +19,12 @@ export default function CampaignsPage() {
   
   const [sessionLoading, setSessionLoading] = useState(true);
   const [data, setData] = useState<CampaignListItem[]>([]);
-  const [datePreset, setDatePreset] = useState<DatePreset>('30d');
+  const [range, setRange] = useState<DateRange>({ from: daysAgo(30), to: today() });
   
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [isLoading, setIsLoading] = useState(false);
 
-  const selectedDays = DATE_PRESETS.find((p) => p.value === datePreset)?.days ?? 30;
-  
   function daysAgo(days: number): string {
     const d = new Date();
     d.setDate(d.getDate() - days + 1);
@@ -36,8 +35,8 @@ export default function CampaignsPage() {
     return new Date().toISOString().split('T')[0];
   }
 
-  const dateFrom = useMemo(() => daysAgo(selectedDays), [selectedDays]);
-  const dateTo = useMemo(() => today(), []);
+  const dateFrom = range.from;
+  const dateTo = range.to;
 
   useEffect(() => {
     getSession().then((res) => {
@@ -101,22 +100,7 @@ export default function CampaignsPage() {
             
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <AccountSwitcher />
-              <div className="flex rounded-xl border border-line bg-panel text-sm">
-                {DATE_PRESETS.map((preset) => (
-                  <button
-                    key={preset.value}
-                    type="button"
-                    onClick={() => setDatePreset(preset.value)}
-                    className={`px-3 py-2 transition ${
-                      datePreset === preset.value
-                        ? 'bg-ink text-white first:rounded-l-xl last:rounded-r-xl'
-                        : 'text-muted hover:text-ink'
-                    }`}
-                  >
-                    {t(`preset.${preset.value}` as any)}
-                  </button>
-                ))}
-              </div>
+              <DateRangePicker value={range} onChange={setRange} />
             </div>
           </header>
 

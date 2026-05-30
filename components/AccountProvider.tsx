@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { ConnectedAccount } from '../lib/types';
 import { getAccounts } from '../lib/api';
@@ -30,14 +30,18 @@ export function AccountProvider({ children }: { children: ReactNode }) {
     // Better to let the Sidebar handle URL generation.
   };
 
+  const queryAccountIdRef = useRef<string | undefined>(undefined);
+  queryAccountIdRef.current =
+    typeof router.query.account_id === 'string' ? router.query.account_id : undefined;
+
   const fetchAccounts = useCallback(async () => {
     try {
       const data = await getAccounts();
       setAccounts(data);
       
       // Determine initial selection
-      const queryId = router.query.account_id as string;
-      const storedId = localStorage.getItem(STORAGE_KEY);
+      const queryId = queryAccountIdRef.current;
+      const storedId = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
       
       if (queryId && data.some(a => a.id === queryId)) {
         setSelectedAccountIdState(queryId);
@@ -51,7 +55,7 @@ export function AccountProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  }, [router.query.account_id]);
+  }, []);
 
   useEffect(() => {
     // Only fetch if authenticated (we assume getAccounts handles auth check or fails silently)
