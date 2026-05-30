@@ -59,6 +59,7 @@ import type {
   MetaAudiences,
   TargetingSearchItem,
   AdLevel,
+  ReportRow,
 } from './types';
 import type { PublishPayload } from './adWizard';
 
@@ -276,4 +277,35 @@ export async function searchTargeting(
     params: { account_id: accountId, q, type },
   });
   return data.data;
+}
+
+// ---------------------------------------------------------------------------
+// Reports & export
+// ---------------------------------------------------------------------------
+
+export async function getReport(
+  accountId: string,
+  level: AdLevel,
+  dateFrom?: string,
+  dateTo?: string,
+): Promise<ReportRow[]> {
+  const params: Record<string, string> = { account_id: accountId, level };
+  if (dateFrom) params.date_from = dateFrom;
+  if (dateTo) params.date_to = dateTo;
+  const { data } = await api.get<{ data: ReportRow[] }>('/reports', { params });
+  return data.data;
+}
+
+export function reportExportUrl(
+  accountId: string,
+  level: AdLevel,
+  format: 'csv' | 'xlsx',
+  dateFrom?: string,
+  dateTo?: string,
+): string {
+  const base = (process.env.NEXT_PUBLIC_API_URL || '/api').replace(/\/+$/, '');
+  const p = new URLSearchParams({ account_id: accountId, level, format });
+  if (dateFrom) p.set('date_from', dateFrom);
+  if (dateTo) p.set('date_to', dateTo);
+  return `${base}/reports/export?${p.toString()}`;
 }

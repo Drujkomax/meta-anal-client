@@ -278,3 +278,20 @@ export interface PublishFunnelResult {
 }
 
 export type AdLevel = 'campaign' | 'adset' | 'ad';
+
+export interface ReportRow {
+  campaign_id?: string;
+  campaign_name?: string;
+  adset_id?: string;
+  adset_name?: string;
+  ad_id?: string;
+  ad_name?: string;
+  spend: number;
+  impressions: number;
+  reach: number;
+  clicks: number;
+  ctr: number;
+  cpc: number;
+  cpm: number;
+  currency: string;
+}
