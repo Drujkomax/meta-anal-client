@@ -9,6 +9,7 @@ import { StatusBadge } from '../../components/StatusBadge';
 import { MetricsRow } from '../../components/MetricsRow';
 import { useLanguage } from '../../components/LanguageProvider';
 import { useAccount } from '../../components/AccountProvider';
+import { ManageActions } from '../../components/ManageActions';
 import { Language } from '../../lib/translations';
 
 export default function AdDetailPage() {
@@ -86,6 +87,11 @@ export default function AdDetailPage() {
               <p className="mt-1 text-sm text-muted">
                 Ad {data?.id} {data?.creative_id ? `• Creative ID: ${data.creative_id}` : ''}
               </p>
+              {data && (
+                <div className="mt-3">
+                  <ManageActions level="ad" objectId={String(adId)} status={data.status} />
+                </div>
+              )}
             </div>
             
             <div className="flex rounded-xl border border-line bg-panel text-sm">

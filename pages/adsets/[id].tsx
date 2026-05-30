@@ -10,6 +10,7 @@ import { StatusBadge } from '../../components/StatusBadge';
 import { MetricsRow } from '../../components/MetricsRow';
 import { useLanguage } from '../../components/LanguageProvider';
 import { useAccount } from '../../components/AccountProvider';
+import { ManageActions } from '../../components/ManageActions';
 
 export default function AdSetDetailPage() {
   const router = useRouter();
@@ -79,6 +80,11 @@ export default function AdSetDetailPage() {
               <p className="mt-1 text-sm text-muted">
                 Ad Set {data?.id} • {data?.optimization_goal}
               </p>
+              {data && (
+                <div className="mt-3">
+                  <ManageActions level="adset" objectId={String(adsetId)} status={data.status} />
+                </div>
+              )}
             </div>
             
             <div className="flex rounded-xl border border-line bg-panel text-sm">

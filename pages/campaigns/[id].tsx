@@ -10,6 +10,7 @@ import { StatusBadge } from '../../components/StatusBadge';
 import { MetricsRow } from '../../components/MetricsRow';
 import { useLanguage } from '../../components/LanguageProvider';
 import { useAccount } from '../../components/AccountProvider';
+import { ManageActions } from '../../components/ManageActions';
 
 export default function CampaignDetailPage() {
   const router = useRouter();
@@ -78,6 +79,11 @@ export default function CampaignDetailPage() {
               <p className="mt-1 text-sm text-muted">
                 {t('section.campaign')} {data?.id} • {data?.objective}
               </p>
+              {data && (
+                <div className="mt-3">
+                  <ManageActions level="campaign" objectId={String(campaignId)} status={data.status} />
+                </div>
+              )}
             </div>
             
             <div className="flex rounded-xl border border-line bg-panel text-sm">
