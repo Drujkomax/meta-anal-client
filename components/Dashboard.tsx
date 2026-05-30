@@ -23,8 +23,6 @@ import {
   ConnectedAccount,
   CrossAccountResponse,
   IdentityNode,
-  DATE_PRESETS,
-  DatePreset,
   TrendPoint,
 } from '../lib/types';
 import { AccountSwitcher } from './AccountSwitcher';
@@ -32,6 +30,7 @@ import { Sidebar } from './Sidebar';
 import { HelperCard } from './HelperCard';
 import { useLanguage } from './LanguageProvider';
 import { useAccount } from './AccountProvider';
+import { DateRangePicker, type DateRange } from './DateRangePicker';
 import { Language, TranslationKey } from '../lib/translations';
 import { Trash2 } from 'lucide-react';
 
@@ -111,7 +110,7 @@ export function Dashboard() {
   const { t, language } = useLanguage();
   const { selectedAccountId, accounts } = useAccount();
   
-  const [datePreset, setDatePreset] = useState<DatePreset>('30d');
+  const [range, setRange] = useState<DateRange>({ from: daysAgo(30), to: today() });
   const [data, setData] = useState<AnalyticsResponse | null>(null);
   const [trends, setTrends] = useState<TrendPoint[]>([]);
   const [crossAccount, setCrossAccount] = useState<CrossAccountResponse | null>(null);
@@ -121,9 +120,8 @@ export function Dashboard() {
   const [isSyncing, setIsSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const selectedDays = DATE_PRESETS.find((p) => p.value === datePreset)?.days ?? 30;
-  const dateFrom = useMemo(() => daysAgo(selectedDays), [selectedDays]);
-  const dateTo = useMemo(() => today(), []);
+  const dateFrom = range.from;
+  const dateTo = range.to;
 
   const selectedAccount = useMemo(
     () => accounts.find((a) => a.id === selectedAccountId),
@@ -232,23 +230,8 @@ export function Dashboard() {
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <AccountSwitcher />
-            {/* Date preset selector */}
-            <div className="flex rounded-xl border border-line bg-panel text-sm">
-              {DATE_PRESETS.map((preset) => (
-                <button
-                  key={preset.value}
-                  type="button"
-                  onClick={() => setDatePreset(preset.value)}
-                  className={`px-3 py-2 transition ${
-                    datePreset === preset.value
-                      ? 'bg-ink text-white first:rounded-l-xl last:rounded-r-xl'
-                      : 'text-muted hover:text-ink'
-                  }`}
-                >
-                  {t(`preset.${preset.value}` as TranslationKey)}
-                </button>
-              ))}
-            </div>
+            {/* Date range picker (Facebook-style calendar) */}
+            <DateRangePicker value={range} onChange={setRange} />
             <button
               type="button"
               onClick={handleSync}
