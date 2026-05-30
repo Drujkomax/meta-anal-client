@@ -15,6 +15,8 @@ export function Sidebar({ currentPath = '/dashboard' }: SidebarProps) {
   const navigation: { label: TranslationKey; href: string }[] = [
     { label: 'nav.dashboard', href: '/dashboard' },
     { label: 'nav.campaigns', href: '/campaigns' },
+    { label: 'nav.createAd', href: '/ads/new' },
+    { label: 'nav.reports', href: '/reports' },
     { label: 'nav.adAccounts', href: '/dashboard#accounts' },
     { label: 'nav.adsInsights', href: '/dashboard#ads' },
   ];

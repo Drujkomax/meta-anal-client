@@ -229,3 +229,52 @@ export const DATE_PRESETS: { label: string; value: DatePreset; days: number }[] 
   { label: '30 days', value: '30d', days: 30 },
   { label: '90 days', value: '90d', days: 90 },
 ];
+
+// ---------------------------------------------------------------------------
+// Ad management — Meta reference data (wizard lookups) + write results
+// ---------------------------------------------------------------------------
+
+export interface MetaPage {
+  id: string;
+  name: string;
+  access_token?: string;
+}
+
+export interface MetaPromotablePost {
+  id: string;
+  message?: string;
+  created_time?: string;
+}
+
+export interface MetaPixel {
+  id: string;
+  name: string;
+}
+
+export interface MetaAudience {
+  id: string;
+  name: string;
+  subtype?: string;
+  approximate_count?: number;
+}
+
+export interface MetaAudiences {
+  custom: MetaAudience[];
+  saved: { id: string; name: string }[];
+}
+
+export interface TargetingSearchItem {
+  id?: string;
+  key?: string;
+  name: string;
+  type?: string;
+  audience_size_lower_bound?: number;
+}
+
+export interface PublishFunnelResult {
+  campaignId: string;
+  adSetId: string;
+  adId: string;
+}
+
+export type AdLevel = 'campaign' | 'adset' | 'ad';

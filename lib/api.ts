@@ -51,6 +51,16 @@ export async function getAccounts(): Promise<ConnectedAccount[]> {
 // ---------------------------------------------------------------------------
 
 import { IdentityNode } from './types';
+import type {
+  PublishFunnelResult,
+  MetaPage,
+  MetaPromotablePost,
+  MetaPixel,
+  MetaAudiences,
+  TargetingSearchItem,
+  AdLevel,
+} from './types';
+import type { PublishPayload } from './adWizard';
 
 export async function getIdentities(): Promise<IdentityNode[]> {
   const { data } = await api.get<{ data: IdentityNode[] }>('/identities');
@@ -180,5 +190,90 @@ export async function getAdDetail(
   if (dateTo) params.date_to = dateTo;
 
   const { data } = await api.get<{ data: AdDetail }>(`/ads/${adId}`, { params });
+  return data.data;
+}
+
+// ---------------------------------------------------------------------------
+// Ad management — write operations + Meta reference lookups
+// ---------------------------------------------------------------------------
+
+const LEVEL_PATH: Record<AdLevel, string> = {
+  campaign: 'campaigns',
+  adset: 'adsets',
+  ad: 'ads',
+};
+
+export async function publishAd(
+  accountId: string,
+  payload: PublishPayload,
+): Promise<PublishFunnelResult> {
+  const { data } = await api.post<{ data: PublishFunnelResult }>('/ads/publish', payload, {
+    params: { account_id: accountId },
+  });
+  return data.data;
+}
+
+export async function updateAdObjectStatus(
+  level: AdLevel,
+  accountId: string,
+  id: string,
+  status: 'ACTIVE' | 'PAUSED',
+): Promise<void> {
+  await api.patch(`/${LEVEL_PATH[level]}/${id}`, { status }, { params: { account_id: accountId } });
+}
+
+export async function updateAdObjectBudget(
+  level: AdLevel,
+  accountId: string,
+  id: string,
+  dailyBudgetMinor: number,
+): Promise<void> {
+  await api.patch(
+    `/${LEVEL_PATH[level]}/${id}`,
+    { daily_budget: dailyBudgetMinor },
+    { params: { account_id: accountId } },
+  );
+}
+
+export async function deleteAdObject(level: AdLevel, accountId: string, id: string): Promise<void> {
+  await api.delete(`/${LEVEL_PATH[level]}/${id}`, { params: { account_id: accountId } });
+}
+
+export async function getPages(accountId: string): Promise<MetaPage[]> {
+  const { data } = await api.get<{ data: MetaPage[] }>('/meta/pages', {
+    params: { account_id: accountId },
+  });
+  return data.data;
+}
+
+export async function getPagePosts(accountId: string, pageId: string): Promise<MetaPromotablePost[]> {
+  const { data } = await api.get<{ data: MetaPromotablePost[] }>(`/meta/pages/${pageId}/posts`, {
+    params: { account_id: accountId },
+  });
+  return data.data;
+}
+
+export async function getPixels(accountId: string): Promise<MetaPixel[]> {
+  const { data } = await api.get<{ data: MetaPixel[] }>('/meta/pixels', {
+    params: { account_id: accountId },
+  });
+  return data.data;
+}
+
+export async function getAudiences(accountId: string): Promise<MetaAudiences> {
+  const { data } = await api.get<{ data: MetaAudiences }>('/meta/audiences', {
+    params: { account_id: accountId },
+  });
+  return data.data;
+}
+
+export async function searchTargeting(
+  accountId: string,
+  q: string,
+  type: 'adinterest' | 'adgeolocation' = 'adinterest',
+): Promise<TargetingSearchItem[]> {
+  const { data } = await api.get<{ data: TargetingSearchItem[] }>('/meta/targeting/search', {
+    params: { account_id: accountId, q, type },
+  });
   return data.data;
 }
